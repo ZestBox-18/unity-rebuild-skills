@@ -18,7 +18,7 @@ log_step() { echo -e "${BLUE}[STEP]${NC} $1"; }
 
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SKILL_ROOT="$(dirname "$SCRIPT_DIR")"
+SKILL_ROOT="$SCRIPT_DIR"
 ASSRIPPER_DIR="$SKILL_ROOT/.assetripper"
 
 # AssetRipper settings
@@ -67,7 +67,7 @@ log_step "Step 1: Checking AssetRipper installation..."
 
 if [ ! -d "$ASSRIPPER_DIR" ]; then
     log_warn "AssetRipper not found. Installing..."
-    "$SKILL_ROOT/install.sh"
+    cd "$SKILL_ROOT" && ./install.sh
 fi
 
 # Find executable
@@ -96,7 +96,7 @@ else
     log_info "Starting AssetRipper on port $ASSRIPPER_PORT..."
     nohup "$ASSRIPPER_EXE" --headless --port "$ASSRIPPER_PORT" > /dev/null 2>&1 &
     ASSRIPPER_PID=$!
-    
+
     # Wait for AssetRipper to start
     log_info "Waiting for AssetRipper to start..."
     for i in {1..30}; do
@@ -116,16 +116,15 @@ fi
 log_step "Step 3: Loading APK file..."
 log_info "This may take a while depending on APK size..."
 
-curl -s -X POST \
-    -F "Path=$APK_PATH" \
-    "http://localhost:$ASSRIPPER_PORT/Commands/LoadFile" || {
+curl -s -X POST --data-urlencode "Path=$APK_PATH" \
+    "http://localhost:$ASSRIPPER_PORT/LoadFile" || {
     log_error "Failed to load APK"
     exit 1
 }
 
 # Wait for processing
 log_info "Processing APK..."
-sleep 10
+sleep 30
 
 # Step 4: Export Unity project
 log_step "Step 4: Exporting Unity project..."
@@ -133,15 +132,13 @@ log_step "Step 4: Exporting Unity project..."
 EXPORT_DIR="$OUTPUT_DIR/assetripper_export_$TIMESTAMP"
 mkdir -p "$EXPORT_DIR"
 
-curl -s -X POST \
-    -F "Path=$EXPORT_DIR" \
-    -F "CreateSubfolder=false" \
-    "http://localhost:$ASSRIPPER_PORT/Commands/ExportUnityProject" || {
+curl -s -X POST --data-urlencode "Path=$EXPORT_DIR" \
+    "http://localhost:$ASSRIPPER_PORT/Export/UnityProject" || {
     log_error "Failed to export Unity project"
     exit 1
 }
 
-sleep 5
+sleep 10
 
 log_info "✓ Export completed: $EXPORT_DIR"
 

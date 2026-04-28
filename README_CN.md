@@ -1,5 +1,9 @@
 # APK 转 Unity 项目重构工具
 
+**[English](README.md)** | 中文
+
+---
+
 逆向工程 Android APK 文件，使用 AssetRipper 提取资源并创建 Unity 项目。支持跨平台自动安装，在本地即可完成处理。
 
 ## 快速开始
@@ -200,7 +204,3 @@ unity-rebuild-skills/
 1. 查看常见问题部分
 2. 阅读 AssetRipper 文档
 3. 在 GitHub 仓库提交 Issue
-
----
-
-**[English](README.md)** | 中文

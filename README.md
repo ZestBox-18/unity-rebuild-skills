@@ -56,3 +56,7 @@ brew install wget curl unzip zip
 AssetRipper is GPL-3.0 licensed. Only use on APKs you own or have permission to analyze.
 
 **See [SKILL.md](SKILL.md) for full documentation.**
+
+---
+
+English | **[中文](README_CN.md)**
